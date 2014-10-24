@@ -8,7 +8,7 @@
 .ik-searchbox-result{
 	position: absolute;
 	height:auto;
-	max-height: 100px;
+	max-height: 150px;
 	overflow: auto;
 }
 

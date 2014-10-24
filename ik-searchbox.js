@@ -20,7 +20,8 @@
 			},
 			onItemClick : function(v){
 				//nothing
-			}
+			},
+			hintMaxHeight : '150px'
 		},
 
 		_create : function(){
@@ -53,6 +54,8 @@
 				//回车
 				if(event.which == 13){
 					event.preventDefault();
+					//清空列表
+					that._closeResult();
 				
 					//获取INPUT的VAL
 					var typed = that.element.val();
@@ -99,6 +102,11 @@
 			var a = $('<a />').attr('href', '#').text(label).css('text-decoration', 'none');
 			var li = $('<li />').addClass('ik-searchbox-li').append(a);
 			this._resultUlObj.append(li);
+			//添加click事件
+			var that = this;
+			li.click(function(){
+				that.options.onItemClick(c);
+			});
 		},
 
 		_closeResult : function(){
@@ -107,6 +115,7 @@
 
 		_update : function(){
 			this.element.attr('placeholder', this.options.prompt);
+			this._resultUlObj.parent().css('max-height', this.options.hintMaxHeight);
 		}
 	});
 
