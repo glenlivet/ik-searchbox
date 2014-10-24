@@ -1,0 +1,35 @@
+
+
+/** 输入框 */
+.ik-searchbox {
+	display: block;
+}
+
+.ik-searchbox-result{
+	position: absolute;
+	height:auto;
+	max-height: 100px;
+	overflow: auto;
+}
+
+.ik-searchbox-ul{
+	margin: 0;
+	padding:0 6px 0 0;
+	list-style:none;
+}
+
+.ik-searchbox-li{
+	border-top-style:solid;
+	border-width: 1px;
+	border-color: white;
+	padding: 2px;
+	width: 100%;
+	background-color: Gainsboro;
+	opacity:0.9;
+}
+
+.ik-searchbox-li a {
+	display: block;
+	width : 100%;
+	color : black;
+}
