@@ -118,8 +118,6 @@
 					that._closeHint();
 				}
 			});
-			//set _source
-			this._source = (this.options.url === null) ? 'custom' : 'ajax';
 
 			//
 			this._update();
