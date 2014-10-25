@@ -21,55 +21,82 @@
 			onItemClick : function(v){
 				//nothing
 			},
+			url : null,
+			method : 'get',
+			params : {},
+			realtime : false,
+			/**
+			 * source : define how searchbox fetch the candidates.
+			 * the value can be :
+			 * 'custom' : the candidates will be assigned and controlled directly.
+			 * 'ajax' : the candidates will be fetched from remote with ajax call.
+			 */
+			source : 'custom', 
 			hintMaxHeight : '150px'
 		},
 
+		_loaded : false,
+
+		reset : function(){
+			if(this.options.source === 'ajax'){
+				this.options.candidates = [];
+				this._loaded = false;
+			}
+		},
+
 		_create : function(){
-			//添加样式
+			//add the specific class to the input element.
 			this.element.addClass('ik-searchbox');
 
-			//计算width
+			//caculate the width, height and offset of the input element.
 			var width = this.element.width();
 			var height = this.element.outerHeight(true);
 			var offset = this.element.offset();
 
 
-			//添加一个搜索结果提示DIV
+			//declare and construct the hint box.
 			var resultDiv = $('<div />')
 				.addClass('ik-searchbox-result')
 				.css('width', width);
-			//在搜索结果提示DIV中添加一个ul
+			
 			var ul = $('<ul/>')
 				.addClass('ik-searchbox-ul');
 			ul.appendTo(resultDiv);
-			//resultDiv.appendTo(this.element);
+
+			//insert the hint box after the input element.
 			resultDiv.insertAfter(this.element);
 			resultDiv.offset({top: offset.top+height, left:offset.left});
 
+			//relate the hint list with this widget
 			this._resultUlObj = ul;
 
 			var that = this;
-			//给INPUT添加一个按键事件
+			
+			//bind keyup listener to the input element
 			this.element.keyup(function(event){
-				//回车
+
+				//when return key
 				if(event.which == 13){
 					event.preventDefault();
-					//清空列表
+
+					//clear hint first
 					that._closeResult();
 				
-					//获取INPUT的VAL
+					//get the value of the input element.
 					var typed = that.element.val();
 
 					if(typeof typed === 'undefined' || $.trim(typed) === ''){
 						that._closeResult();
 					}
-					//调用search方法
+
+					//invoke search method
 					var result = that._search(typed);
 
 				}
+
 				//backspace
 				if(event.which == 8){
-					//获取INPUT的VAL
+					
 					var typed = that.element.val();
 
 					if(typeof typed === 'undefined' || $.trim(typed) === ''){
@@ -87,8 +114,51 @@
 			//
 			this._update();
 		},
-		//进行搜索
+		
 		_search : function(typed){
+			switch(this.options.source){
+				case 'custom':
+					this._match(typed);
+					break;
+				case 'ajax':
+					//define ajax callback
+					var cb = function(){
+						this._match(typed);
+					};
+					if(this.options.realtime || !this._loaded){
+						this._ajax(cb);
+					} else {
+						this._match(typed);
+					}
+					break;
+				default:
+					break;
+			}
+			
+		},
+
+		_ajax : function(cb){
+
+			var _type = this.options.method.toUpperCase() === 'POST' ? 'POST' : 'GET';
+
+			var settings = {
+				type : _type,
+				url : this.options.url,
+				dataType : 'json'
+			};
+			if(this.options.params !== null){
+				settings.data = params;
+			}
+			var that  = this;
+			$.ajax(settings)
+				.done(function(d){
+					that.options.data = d;
+					that._loaded = true;
+					cb.call(that);
+				});
+		},
+
+		_match : function(typed){
 			for(var i in this.options.candidates){
 				var c = this.options.candidates[i];
 				if(this.options.match(c, typed)){
