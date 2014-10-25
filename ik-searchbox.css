@@ -5,7 +5,7 @@
 	display: block;
 }
 
-.ik-searchbox-result{
+.ik-searchbox-hint{
 	position: absolute;
 	height:auto;
 	max-height: 150px;

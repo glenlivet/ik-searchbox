@@ -8,14 +8,11 @@
     <script type="text/javascript" src="jquery-ui.js"></script>
     <script type="text/javascript" src="ik-searchbox.js"></script>
     <style>
-        #searchbox {
+        input {
             width : 200px;
         }
 
-        #searchbox2 {
-            width : 200px;
-            margin-top:10px;
-        }
+
     </style>
 
 </head>
@@ -23,22 +20,68 @@
     <h2>Basic SearchBox</h2>
     <p>Try input 'a' , 'aa', 'aaa', respectively!</p>
     <input type="text" id="searchbox"></input>
-    <div>
-    <h2>Basic SearchBox</h2>
+
+    <h2>Complicated Source Search</h2>
+    <p>请尝试输入 小明 小亮 小金 xm xl xj 搜索！</p>
+    <input type="text" id="searchbox2"></input>
+
+    <h2>Remote Source Search</h2>
     <p>Press enter key in input box to do searching.</p>
-</div>
-     <div id="searchbox2"></div>
+    <input type="text" id="searchbox3"></input>
+
     <script>
 
+        $(document).ready(function(){
 
-        $('#searchbox').searchbox({
-            candidates : ['aaa', 'abc', 'bbb', 'bcd', 'ccc','a','aa','aaaa','aacc','casc','csas','cass','sass','cage','cafge'],
-            prompt : '请输入值后按回车进行检索',
-            hintMaxHeight: '200px',
-            onItemClick : function(v){
-                alert(v);
-            }
+            $('#searchbox').searchbox({
+                candidates : ['aaa', 'abc', 'bbb', 'bcd', 'ccc','a','aa','aaaa','aacc','casc','csas','cass','sass','cage','cafge'],
+                prompt : 'Press the enter key to do searching.',
+                hintMaxHeight: '200px',
+                onItemClick : function(v){
+                    alert(v);
+                }
+            });
+
+            var data = [];
+            data.push({name : '小明', code : 'xm', score : 89});
+            data.push({name : '小亮', code : 'xl', score : 100});
+            data.push({name : '小金', code : 'xj', score : 97});
+
+            $('#searchbox2').searchbox({
+                candidates : data,
+                prompt : '请输入值后按回车进行检索',
+                hintMaxHeight: '200px',
+                onItemClick : function(v){
+                    alert('name: ' + v.name + '; score: ' + v.score);
+                },
+                fetchLabel : function(c){
+                    return c.name;
+                },
+                fetchValue : function(c){
+                    return c.score;
+                },
+                match : function(c, typed){
+                    if(c.name.indexOf(typed) > -1 || c.code.indexOf(typed) > -1){
+                        return true;
+                    }
+                    return false;
+                }
+            });
+
+            $('#searchbox3').searchbox({
+                url : 'searchbox',
+                method : 'get',
+                realtime : true,
+                reaction : 'reset',
+                prompt : 'Press the enter key to do searching.',
+                hintMaxHeight: '200px',
+                onItemClick : function(v){
+                    alert(v);
+                }
+            });
+
         });
+        
     </script>
 </body>
 </html>

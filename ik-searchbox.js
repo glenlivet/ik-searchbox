@@ -21,24 +21,31 @@
 			onItemClick : function(v){
 				//nothing
 			},
+			/**
+			 * Define the reaction of the input element on item clicked.
+			 * `none` : do nothing.
+			 * `label` : display the label of item.
+			 * `reset` : clear the input value.
+			 */
+			reaction : 'label',
 			url : null,
 			method : 'get',
 			params : {},
 			realtime : false,
-			/**
+			hintMaxHeight : '150px'
+		},
+		/**
 			 * source : define how searchbox fetch the candidates.
 			 * the value can be :
 			 * 'custom' : the candidates will be assigned and controlled directly.
 			 * 'ajax' : the candidates will be fetched from remote with ajax call.
 			 */
-			source : 'custom', 
-			hintMaxHeight : '150px'
-		},
+		_source : 'custom',
 
 		_loaded : false,
 
 		reset : function(){
-			if(this.options.source === 'ajax'){
+			if(this._source === 'ajax'){
 				this.options.candidates = [];
 				this._loaded = false;
 			}
@@ -55,20 +62,20 @@
 
 
 			//declare and construct the hint box.
-			var resultDiv = $('<div />')
-				.addClass('ik-searchbox-result')
+			var hintDiv = $('<div />')
+				.addClass('ik-searchbox-hint')
 				.css('width', width);
 			
 			var ul = $('<ul/>')
 				.addClass('ik-searchbox-ul');
-			ul.appendTo(resultDiv);
+			ul.appendTo(hintDiv);
 
 			//insert the hint box after the input element.
-			resultDiv.insertAfter(this.element);
-			resultDiv.offset({top: offset.top+height, left:offset.left});
+			hintDiv.insertAfter(this.element);
+			hintDiv.offset({top: offset.top+height, left:offset.left});
 
 			//relate the hint list with this widget
-			this._resultUlObj = ul;
+			this._hintUlObj = ul;
 
 			var that = this;
 			
@@ -80,17 +87,17 @@
 					event.preventDefault();
 
 					//clear hint first
-					that._closeResult();
+					that._closeHint();
 				
 					//get the value of the input element.
 					var typed = that.element.val();
 
 					if(typeof typed === 'undefined' || $.trim(typed) === ''){
-						that._closeResult();
+						that._closeHint();
 					}
 
 					//invoke search method
-					var result = that._search(typed);
+					var hint = that._search(typed);
 
 				}
 
@@ -100,23 +107,26 @@
 					var typed = that.element.val();
 
 					if(typeof typed === 'undefined' || $.trim(typed) === ''){
-						that._closeResult();
+						that._closeHint();
 					}
 				}
 
 				//ESC
 				if(event.which == 27){
 					event.preventDefault();
-					that._closeResult();
+					that.element.val('');
+					that._closeHint();
 				}
 			});
+			//set _source
+			this._source = (this.options.url === null) ? 'custom' : 'ajax';
 
 			//
 			this._update();
 		},
 		
 		_search : function(typed){
-			switch(this.options.source){
+			switch(this._source){
 				case 'custom':
 					this._match(typed);
 					break;
@@ -139,7 +149,27 @@
 
 		_ajax : function(cb){
 
-			var _type = this.options.method.toUpperCase() === 'POST' ? 'POST' : 'GET';
+			var _type = '';
+			switch(this.options.method.toUpperCase()){
+				case 'GET' : 
+					_type = 'GET';
+					break;
+				case 'POST' : 
+					_type = 'POST';
+					break;
+				case 'PUT' : 
+					_type = 'PUT';
+					break;
+				case 'DELETE' : 
+					_type = 'DELETE';
+					break;
+				case 'HEAD' : 
+					_type = 'HEAD';
+					break;
+				default : 
+					_type = 'GET';
+					break;
+			}
 
 			var settings = {
 				type : _type,
@@ -147,12 +177,12 @@
 				dataType : 'json'
 			};
 			if(this.options.params !== null){
-				settings.data = params;
+				settings.data = this.options.params;
 			}
 			var that  = this;
 			$.ajax(settings)
 				.done(function(d){
-					that.options.data = d;
+					that.options.candidates = d;
 					that._loaded = true;
 					cb.call(that);
 				});
@@ -171,23 +201,39 @@
 			var label = this.options.fetchLabel(c);
 			var a = $('<a />').attr('href', '#').text(label).css('text-decoration', 'none');
 			var li = $('<li />').addClass('ik-searchbox-li').append(a);
-			this._resultUlObj.append(li);
+			this._hintUlObj.append(li);
 			//添加click事件
 			var that = this;
 			li.click(function(){
+				that._closeHint();
+				that._handleReaction(c);
 				that.options.onItemClick(c);
 			});
 		},
 
-		_closeResult : function(){
-			this._resultUlObj.html('');
+		_handleReaction : function(c){
+			switch(this.options.reaction){
+				case 'reset':
+					this.element.val('');
+					break;
+				case 'label':
+					this.element.val(this.options.fetchLabel(c));
+					break;
+				case 'none':
+					break;
+				default:
+					break;
+			}
+		},
+
+		_closeHint : function(){
+			this._hintUlObj.html('');
 		},
 
 		_update : function(){
 			this.element.attr('placeholder', this.options.prompt);
-			this._resultUlObj.parent().css('max-height', this.options.hintMaxHeight);
+			this._hintUlObj.parent().css('max-height', this.options.hintMaxHeight);
 		}
 	});
-
 
 })(jQuery);
