@@ -32,7 +32,11 @@
 			method : 'get',
 			params : {},
 			realtime : false,
-			hintMaxHeight : '150px'
+			hintMaxHeight : '180px',
+			/**
+			 * customise search method.
+			 */
+			searchMethod : null
 		},
 		/**
 			 * source : define how searchbox fetch the candidates.
@@ -48,6 +52,17 @@
 			if(this._source === 'ajax'){
 				this.options.candidates = [];
 				this._loaded = false;
+			}
+		},
+
+		/**
+		 * used in combination with customized search method
+		 * to display the hint data.
+		 * @param d should be a list of data.
+		 */
+		displayHint : function(d){
+			for(var i in d){
+				this._insertItem(d[i]);
 			}
 		},
 
@@ -124,6 +139,13 @@
 		},
 		
 		_search : function(typed){
+
+			if(this.options.searchMethod){
+				//has customized search method
+				this.options.searchMethod.call(this, typed);
+				return;
+			}
+
 			switch(this._source){
 				case 'custom':
 					this._match(typed);

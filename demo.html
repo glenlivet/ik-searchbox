@@ -9,7 +9,7 @@
     <script type="text/javascript" src="ik-searchbox.js"></script>
     <style>
         input {
-            width : 200px;
+            width : 300px;
         }
 
 
@@ -28,6 +28,10 @@
     <h2>Remote Source Search</h2>
     <p>Press enter key in input box to do searching.</p>
     <input type="text" id="searchbox3"></input>
+
+    <h2>Customized Search Method</h2>
+    <p>Press enter key in input box to do searching.</p>
+    <input type="text" id="searchbox4"></input>
 
     <script>
 
@@ -75,6 +79,16 @@
                 reaction : 'reset',
                 prompt : 'Press the enter key to do searching.',
                 hintMaxHeight: '200px',
+                onItemClick : function(v){
+                    alert(v);
+                }
+            });
+
+            $('#searchbox4').searchbox({
+                prompt : 'Press the enter key to do searching.',
+                searchMethod : function(t){
+                    this.displayHint(['aa', 'aaa', 'aaaa']);
+                },
                 onItemClick : function(v){
                     alert(v);
                 }
