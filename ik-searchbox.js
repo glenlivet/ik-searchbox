@@ -5,6 +5,10 @@
 		options : {
 			prompt : 'Please Input Value',
 			candidates : [],
+			/**
+			 * value must be selected
+			 */
+			mustSelect : true,
 			delay : 200,
 			match : function(c, typed){
 				if(typeof c === 'string' && c.indexOf(typed)>-1){
@@ -37,7 +41,10 @@
 			/**
 			 * customise search method.
 			 */
-			searchMethod : null
+			searchMethod : null,
+			onNoSelectBlur : function(){
+				//nothing
+			}
 		},
 		/**
 			 * source : define how searchbox fetch the candidates.
@@ -47,6 +54,10 @@
 			 */
 		_source : 'custom',
 
+		/**
+		 * if _source == 'ajax', and realtime == false, 
+		 * _loaded is indicating whether data is loaded from remote.
+		 */
 		_loaded : false,
 
 		_searchTimeout : null,
@@ -128,6 +139,14 @@
 						break;
 				}
 
+			});
+
+			this.element.blur(function(){
+				if(that.options.mustSelect){
+					that.element.val('');
+					that.options.onNoSelectBlur();
+				}
+				setTimeout(that._closeHint.bind(that), 250);
 			});
 
 			//set _source
