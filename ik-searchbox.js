@@ -5,6 +5,7 @@
 		options : {
 			prompt : 'Please Input Value',
 			candidates : [],
+			delay : 200,
 			match : function(c, typed){
 				if(typeof c === 'string' && c.indexOf(typed)>-1){
 					return true;
@@ -48,6 +49,12 @@
 
 		_loaded : false,
 
+		_searchTimeout : null,
+		//terminate search action
+		_termSearch : function(){
+			clearTimeout(this._searchTimeout);
+		},
+
 		reset : function(){
 			if(this._source === 'ajax'){
 				this.options.candidates = [];
@@ -61,6 +68,7 @@
 		 * @param d should be a list of data.
 		 */
 		displayHint : function(d){
+			this._closeHint();
 			for(var i in d){
 				this._insertItem(d[i]);
 			}
@@ -97,41 +105,29 @@
 			//bind keyup listener to the input element
 			this.element.keyup(function(event){
 
-				//when return key
-				if(event.which == 13){
-					event.preventDefault();
-
-					//clear hint first
-					that._closeHint();
-				
-					//get the value of the input element.
-					var typed = that.element.val();
-
-					if(typeof typed === 'undefined' || $.trim(typed) === ''){
-						that._closeHint();
-					}
-
-					//invoke search method
-					var hint = that._search(typed);
-
+				//terminate search action
+				that._termSearch();
+				//clear hint first
+				that._closeHint();
+				var typed = that.element.val();
+				//do nothing if its none.
+				if(typeof typed === 'undefined' || $.trim(typed) === ''){
+					return;
+				}
+				switch(event.which){
+					//ESC
+					case 27:
+						event.preventDefault();
+						that.element.val('');
+						break;
+					//enter
+					case 13:
+						event.preventDefault();
+					default:
+						that._searchTimeout = setTimeout(that._search.bind(that, typed), that.options.delay);
+						break;
 				}
 
-				//backspace
-				if(event.which == 8){
-					
-					var typed = that.element.val();
-
-					if(typeof typed === 'undefined' || $.trim(typed) === ''){
-						that._closeHint();
-					}
-				}
-
-				//ESC
-				if(event.which == 27){
-					event.preventDefault();
-					that.element.val('');
-					that._closeHint();
-				}
 			});
 
 			//set _source
@@ -211,6 +207,7 @@
 		},
 
 		_match : function(typed){
+			this._closeHint();
 			for(var i in this.options.candidates){
 				var c = this.options.candidates[i];
 				if(this.options.match(c, typed)){
