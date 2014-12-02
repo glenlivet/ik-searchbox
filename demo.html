@@ -38,63 +38,70 @@
         $(document).ready(function(){
 
             $('#searchbox').searchbox({
-                candidates : ['aaa', 'abc', 'bbb', 'bcd', 'ccc','a','aa','aaaa','aacc','casc','csas','cass','sass','cage','cafge'],
                 prompt : 'Press the enter key to do searching.',
                 hintMaxHeight: '200px',
                 dropBtn:true,
+                searchMethod : function(t){
+                    this.displayHint([{name:'孙荔丽', label:'油菜花'}, {name:'张舒来', label:'大天才'}]);
+                },
+                buildTds : function(v){
+                    var td1 = $('<td />').text(v.name);
+                    var td2 = $('<td />').text(v.label);
+                    return [td1,td2];
+                },
                 onItemClick : function(v){
                     //alert(v);
                 }
             });
 
-            var data = [];
-            data.push({name : '小明', code : 'xm', score : 89});
-            data.push({name : '小亮', code : 'xl', score : 100});
-            data.push({name : '小金', code : 'xj', score : 97});
+            // var data = [];
+            // data.push({name : '小明', code : 'xm', score : 89});
+            // data.push({name : '小亮', code : 'xl', score : 100});
+            // data.push({name : '小金', code : 'xj', score : 97});
 
-            $('#searchbox2').searchbox({
-                candidates : data,
-                prompt : '请输入值后按回车进行检索',
-                hintMaxHeight: '200px',
+            // $('#searchbox2').searchbox({
+            //     candidates : data,
+            //     prompt : '请输入值后按回车进行检索',
+            //     hintMaxHeight: '200px',
 
-                onItemClick : function(v){
-                    alert('name: ' + v.name + '; score: ' + v.score);
-                },
-                fetchLabel : function(c){
-                    return c.name;
-                },
-                fetchValue : function(c){
-                    return c.score;
-                },
-                match : function(c, typed){
-                    if(c.name.indexOf(typed) > -1 || c.code.indexOf(typed) > -1){
-                        return true;
-                    }
-                    return false;
-                }
-            });
+            //     onItemClick : function(v){
+            //         alert('name: ' + v.name + '; score: ' + v.score);
+            //     },
+            //     fetchLabel : function(c){
+            //         return c.name;
+            //     },
+            //     fetchValue : function(c){
+            //         return c.score;
+            //     },
+            //     match : function(c, typed){
+            //         if(c.name.indexOf(typed) > -1 || c.code.indexOf(typed) > -1){
+            //             return true;
+            //         }
+            //         return false;
+            //     }
+            // });
 
-            $('#searchbox3').searchbox({
-                url : 'searchbox',
-                method : 'get',
-                realtime : true,
-                reaction : 'reset',
-                prompt : 'Press the enter key to do searching.',
-                hintMaxHeight: '200px',
-                onItemClick : function(v){
-                    alert(v);
-                }
-            });
+            // $('#searchbox3').searchbox({
+            //     url : 'searchbox',
+            //     method : 'get',
+            //     realtime : true,
+            //     reaction : 'reset',
+            //     prompt : 'Press the enter key to do searching.',
+            //     hintMaxHeight: '200px',
+            //     onItemClick : function(v){
+            //         alert(v);
+            //     }
+            // });
 
-            $('#searchbox4').searchbox({
-                prompt : 'Press the enter key to do searching.',
-                searchMethod : function(t){
-                    this.displayHint(['aa', 'aaa', 'aaaa']);
-                },
-                onItemClick : function(v){
-                    alert(v);
-                }
-            });
+            // $('#searchbox4').searchbox({
+            //     prompt : 'Press the enter key to do searching.',
+            //     searchMethod : function(t){
+            //         this.displayHint(['aa', 'aaa', 'aaaa']);
+            //     },
+            //     onItemClick : function(v){
+            //         alert(v);
+            //     }
+            // });
 
         });
         

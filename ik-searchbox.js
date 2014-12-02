@@ -4,19 +4,11 @@
 		//
 		options : {
 			prompt : 'Please Input Value',
-			candidates : [],
 			/**
 			 * value must be selected
 			 */
 			mustSelect : true,
 			delay : 200,
-			match : function(c, typed){
-				if(typeof c === 'string' && c.indexOf(typed)>-1){
-					return true;
-				}else {
-					return false;
-				}
-			},
 			fetchLabel : function(c){
 				return c;
 			},
@@ -26,6 +18,10 @@
 			onItemClick : function(v){
 				//nothing
 			},
+			buildTds : function(c){
+				var td = $('<td />').text(c);
+				return [td];
+			},
 			/**
 			 * Define the reaction of the input element on item clicked.
 			 * `none` : do nothing.
@@ -33,10 +29,7 @@
 			 * `reset` : clear the input value.
 			 */
 			reaction : 'label',
-			url : null,
-			method : 'get',
 			params : {},
-			realtime : false,
 			hintMaxHeight : '180px',
 			dropBtn : false,
 			/**
@@ -51,31 +44,10 @@
 				//nothing
 			}
 		},
-		/**
-			 * source : define how searchbox fetch the candidates.
-			 * the value can be :
-			 * 'custom' : the candidates will be assigned and controlled directly.
-			 * 'ajax' : the candidates will be fetched from remote with ajax call.
-			 */
-		_source : 'custom',
-
-		/**
-		 * if _source == 'ajax', and realtime == false, 
-		 * _loaded is indicating whether data is loaded from remote.
-		 */
-		_loaded : false,
-
 		_searchTimeout : null,
 		//terminate search action
 		_termSearch : function(){
 			clearTimeout(this._searchTimeout);
-		},
-
-		reset : function(){
-			if(this._source === 'ajax'){
-				this.options.candidates = [];
-				this._loaded = false;
-			}
 		},
 
 		_activeDropdown : function(){
@@ -120,19 +92,17 @@
 			}
 			//declare and construct the hint box.
 			var hintDiv = $('<div />')
-				.addClass('ik-searchbox-hint')
-				.css('width', width);
-			
-			var ul = $('<ul/>')
-				.addClass('ik-searchbox-ul');
-			ul.appendTo(hintDiv);
+				.addClass('ik-searchbox-hint');
+
+			var tbl = $('<table />')
+				.addClass('ik-searchbox-table');
+			tbl.appendTo(hintDiv);
 
 			//insert the hint box after the input element.
 			hintDiv.insertAfter(this.element);
 			hintDiv.offset({top: offset.top+height, left:offset.left});
 
-			//relate the hint list with this widget
-			this._hintUlObj = ul;
+			this._hintTblObj = tbl;
 
 			var that = this;
 			
@@ -181,9 +151,6 @@
 				}
 				setTimeout(that._closeHint.bind(that), 250);
 			});
-
-			//set _source
-			this._source = (this.options.url === null) ? 'custom' : 'ajax';
 			//
 			this._update();
 		},
@@ -199,7 +166,7 @@
 			var inputEle = this;
 			dropDownTag.click(function(){
 
-				if(!inputEle._hintUlObj.html().trim()){
+				if(!inputEle._hintTblObj.html().trim()){
 					var typed = inputEle.element.val();
 					inputEle._search(typed);
 				}else {
@@ -215,89 +182,24 @@
 				//has customized search method
 				this.options.searchMethod.call(this, typed);
 				return;
-			}
-
-			switch(this._source){
-				case 'custom':
-					this._match(typed);
-					break;
-				case 'ajax':
-					//define ajax callback
-					var cb = function(){
-						this._match(typed);
-					};
-					if(this.options.realtime || !this._loaded){
-						this._ajax(cb);
-					} else {
-						this._match(typed);
-					}
-					break;
-				default:
-					break;
+			}else {
+				throw new Error('ik-searchbox: searchMethod is not defined in options!');
 			}
 			
 		},
 
-		_ajax : function(cb){
-
-			var _type = '';
-			switch(this.options.method.toUpperCase()){
-				case 'GET' : 
-					_type = 'GET';
-					break;
-				case 'POST' : 
-					_type = 'POST';
-					break;
-				case 'PUT' : 
-					_type = 'PUT';
-					break;
-				case 'DELETE' : 
-					_type = 'DELETE';
-					break;
-				case 'HEAD' : 
-					_type = 'HEAD';
-					break;
-				default : 
-					_type = 'GET';
-					break;
-			}
-
-			var settings = {
-				type : _type,
-				url : this.options.url,
-				dataType : 'json'
-			};
-			if(this.options.params !== null){
-				settings.data = this.options.params;
-			}
-			var that  = this;
-			$.ajax(settings)
-				.done(function(d){
-					that.options.candidates = d;
-					that._loaded = true;
-					cb.call(that);
-				});
-		},
-
-		_match : function(typed){
-			this._closeHint();
-			for(var i in this.options.candidates){
-				var c = this.options.candidates[i];
-				if(this.options.match(c, typed)){
-					this._insertItem(c);
-				}
-			}
-			this._activeDropdown();
-		},
-
 		_insertItem : function(c){
-			var label = this.options.fetchLabel(c);
-			var a = $('<a />').attr('href', '#').text(label).css('text-decoration', 'none');
-			var li = $('<li />').addClass('ik-searchbox-li').append(a);
-			this._hintUlObj.append(li);
+			
+			var tds = this.options.buildTds(c);
+			var tr = $('<tr />').addClass('ik-searchbox-tr');
+			for(var i in tds){
+				tr.append(tds[i]);
+			}
+
+			this._hintTblObj.append(tr);
 			//添加click事件
 			var that = this;
-			li.click(function(){
+			tr.click(function(){
 				that._closeHint();
 				that._handleReaction(c);
 				that._edited = false;
@@ -321,13 +223,13 @@
 		},
 
 		_closeHint : function(){
-			this._hintUlObj.html('');
+			this._hintTblObj.html('');
 			this._deactiveDropdown();
 		},
 
 		_update : function(){
 			this.element.attr('placeholder', this.options.prompt);
-			this._hintUlObj.parent().css('max-height', this.options.hintMaxHeight);
+			this._hintTblObj.parent().css('max-height', this.options.hintMaxHeight);
 		}
 	});
 
