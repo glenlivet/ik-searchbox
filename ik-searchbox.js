@@ -38,6 +38,11 @@
 			params : {},
 			realtime : false,
 			hintMaxHeight : '180px',
+			dropBtn : false,
+			/**
+			 * check whether this element is edited.
+			 */
+			_edited : false,
 			/**
 			 * customise search method.
 			 */
@@ -73,6 +78,20 @@
 			}
 		},
 
+		_activeDropdown : function(){
+			if(this.options.dropBtn){
+				this._dropBtnObj.addClass('ik-searchbox-dropbutton-active');
+				this._dropBtnObj.removeClass('ik-searchbox-dropbutton');
+			}
+		},
+
+		_deactiveDropdown: function(){
+			if(this.options.dropBtn){
+				this._dropBtnObj.addClass('ik-searchbox-dropbutton');
+				this._dropBtnObj.removeClass('ik-searchbox-dropbutton-active');
+			}
+		},
+
 		/**
 		 * used in combination with customized search method
 		 * to display the hint data.
@@ -83,6 +102,7 @@
 			for(var i in d){
 				this._insertItem(d[i]);
 			}
+			this._activeDropdown();
 		},
 
 		_create : function(){
@@ -91,10 +111,13 @@
 
 			//caculate the width, height and offset of the input element.
 			var width = this.element.width();
+			var outerWidth = this.element.outerWidth(true);
 			var height = this.element.outerHeight(true);
 			var offset = this.element.offset();
-
-
+			//enable drop button
+			if(this.options.dropBtn){
+				this._createDropButton();
+			}
 			//declare and construct the hint box.
 			var hintDiv = $('<div />')
 				.addClass('ik-searchbox-hint')
@@ -115,11 +138,21 @@
 			
 			//bind keyup listener to the input element
 			this.element.keyup(function(event){
+				//some keys do not handled
+				switch(event.which){
+					//caps lock shift ctrl alt
+					case 20: case 16: case 17: case 18:
+					case 113: case 114: case 115: case 116:
+					case 117: case 118: case 119: case 120:
+					case 121: case 122: case 123:
+						return;
+				}
 
 				//terminate search action
 				that._termSearch();
 				//clear hint first
 				that._closeHint();
+				that._edited = true;
 				var typed = that.element.val();
 				//do nothing if its none.
 				if(typeof typed === 'undefined' || $.trim(typed) === ''){
@@ -142,7 +175,7 @@
 			});
 
 			this.element.blur(function(){
-				if(that.options.mustSelect){
+				if(that.options.mustSelect && that._edited){
 					that.element.val('');
 					that.options.onNoSelectBlur();
 				}
@@ -153,6 +186,27 @@
 			this._source = (this.options.url === null) ? 'custom' : 'ajax';
 			//
 			this._update();
+		},
+
+		_createDropButton : function(){
+			var dropDownTag = $('<span />')
+							.addClass('ik-searchbox-dropbutton')
+							.text('▲');
+			dropDownTag.insertAfter(this.element);
+			var offset = this.element.offset();
+			var outerWidth = this.element.outerWidth(true);
+			dropDownTag.offset({top: offset.top, left: offset.left+outerWidth-dropDownTag.outerWidth(true)});
+			var inputEle = this;
+			dropDownTag.click(function(){
+
+				if(!inputEle._hintUlObj.html().trim()){
+					var typed = inputEle.element.val();
+					inputEle._search(typed);
+				}else {
+					inputEle._closeHint();
+				}
+			});
+			this._dropBtnObj = dropDownTag;
 		},
 		
 		_search : function(typed){
@@ -233,6 +287,7 @@
 					this._insertItem(c);
 				}
 			}
+			this._activeDropdown();
 		},
 
 		_insertItem : function(c){
@@ -245,6 +300,7 @@
 			li.click(function(){
 				that._closeHint();
 				that._handleReaction(c);
+				that._edited = false;
 				that.options.onItemClick(c);
 			});
 		},
@@ -266,6 +322,7 @@
 
 		_closeHint : function(){
 			this._hintUlObj.html('');
+			this._deactiveDropdown();
 		},
 
 		_update : function(){

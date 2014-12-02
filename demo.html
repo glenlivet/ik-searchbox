@@ -41,6 +41,7 @@
                 candidates : ['aaa', 'abc', 'bbb', 'bcd', 'ccc','a','aa','aaaa','aacc','casc','csas','cass','sass','cage','cafge'],
                 prompt : 'Press the enter key to do searching.',
                 hintMaxHeight: '200px',
+                dropBtn:true,
                 onItemClick : function(v){
                     //alert(v);
                 }
@@ -55,6 +56,7 @@
                 candidates : data,
                 prompt : '请输入值后按回车进行检索',
                 hintMaxHeight: '200px',
+
                 onItemClick : function(v){
                     alert('name: ' + v.name + '; score: ' + v.score);
                 },

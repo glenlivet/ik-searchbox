@@ -2,7 +2,33 @@
 
 /** the text input */
 .ik-searchbox {
-	display: block;
+	
+}
+
+.ik-searchbox-dropbutton{
+	position: absolute;
+	padding-left:3px;
+	padding-bottom:3px;
+	font-size: 0.8em;
+	opacity: 0.3;
+	-ms-transform:rotate(180deg);
+	-webkit-transform:rotate(180deg);
+	transform:rotate(180deg);
+}
+
+.ik-searchbox-dropbutton-active{
+	position: absolute;
+	padding-left:3px;
+	padding-bottom:3px;
+	font-size: 0.8em;
+	opacity:0.8;
+	-ms-transform:rotate(180deg);
+	-webkit-transform:rotate(180deg);
+	transform:rotate(180deg);
+}
+
+.ik-searchbox-dropbutton:hover{
+	opacity:0.8;
 }
 
 .ik-searchbox-hint{
