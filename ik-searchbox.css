@@ -28,6 +28,7 @@
 }
 
 .ik-searchbox-dropbutton:hover{
+	cursor: pointer;
 	opacity:0.8;
 }
 
@@ -63,6 +64,7 @@
 }
 
 .ik-searchbox-tr {
+	cursor: pointer;
 	border:none;
 	padding: 0;
 	margin:0;

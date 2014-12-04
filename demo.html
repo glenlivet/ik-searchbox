@@ -49,8 +49,11 @@
                     var td2 = $('<td />').text(v.label);
                     return [td1,td2];
                 },
+                fetchLabel : function(v){
+                    return v.label;
+                },
                 onItemClick : function(v){
-                    //alert(v);
+                    alert(v.name);
                 }
             });
 

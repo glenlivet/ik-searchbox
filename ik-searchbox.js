@@ -85,7 +85,7 @@
 			var width = this.element.width();
 			var outerWidth = this.element.outerWidth(true);
 			var height = this.element.outerHeight(true);
-			var offset = this.element.offset();
+			//var offset = this.element.position();
 			//enable drop button
 			if(this.options.dropBtn){
 				this._createDropButton();
@@ -96,11 +96,16 @@
 
 			var tbl = $('<table />')
 				.addClass('ik-searchbox-table');
+			if(this.options.hintWidth){
+				tbl.css('width', this.options.hintWidth);
+			}
 			tbl.appendTo(hintDiv);
 
 			//insert the hint box after the input element.
 			hintDiv.insertAfter(this.element);
-			hintDiv.offset({top: offset.top+height, left:offset.left});
+			// hintDiv.css('top', '' + (offset.top+height) + 'px');
+			// hintDiv.css('left', '' + offset.left + 'px');
+			//hintDiv.offset({top: offset.top+height, left:offset.left});
 
 			this._hintTblObj = tbl;
 
@@ -157,10 +162,11 @@
 
 		_createDropButton : function(){
 			var dropDownTag = $('<span />')
+							.addClass('ik-searchbox-db')
 							.addClass('ik-searchbox-dropbutton')
 							.text('▲');
 			dropDownTag.insertAfter(this.element);
-			var offset = this.element.offset();
+			var offset = this.element.position();
 			var outerWidth = this.element.outerWidth(true);
 			dropDownTag.offset({top: offset.top, left: offset.left+outerWidth-dropDownTag.outerWidth(true)});
 			var inputEle = this;
