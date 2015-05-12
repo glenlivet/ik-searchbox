@@ -5,30 +5,22 @@
 	
 }
 
-.ik-searchbox-dropbutton{
-	position: absolute;
-	padding-left:3px;
-	padding-bottom:3px;
-	font-size: 0.8em;
-	opacity: 0.3;
-	-ms-transform:rotate(180deg);
-	-webkit-transform:rotate(180deg);
-	transform:rotate(180deg);
-}
-
-.ik-searchbox-dropbutton-active{
-	position: absolute;
-	padding-left:3px;
-	padding-bottom:3px;
-	font-size: 0.8em;
-	opacity:0.8;
-	-ms-transform:rotate(180deg);
-	-webkit-transform:rotate(180deg);
-	transform:rotate(180deg);
-}
-
-.ik-searchbox-dropbutton:hover{
+.ik-searchbox-dropbutton {
+	position: relative;
+	font-size : 0.8em;
+	left : -1.2em;
 	cursor: pointer;
+}
+
+.ik-searchbox-dropbutton:hover {
+	opacity:0.8;
+}
+
+.ik-opacity3{
+	opacity: 0.3;
+}
+
+.ik-opacity8{
 	opacity:0.8;
 }
 

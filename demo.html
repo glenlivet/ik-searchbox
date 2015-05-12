@@ -34,7 +34,72 @@
     <input type="text" id="searchbox4"></input>
 
     <script>
-
+		
+		var arr = [{
+			name : '孙荔丽',
+			label : '油菜花'
+		},{
+			name : '孙荔丽',
+			label : '油菜花'
+		},{
+			name : '孙荔丽',
+			label : '油菜花'
+		},{
+			name : '孙荔丽',
+			label : '油菜花'
+		},{
+			name : '孙荔丽',
+			label : '油菜花'
+		},{
+			name : '孙荔丽',
+			label : '油菜花'
+		},{
+			name : '孙荔丽',
+			label : '油菜花'
+		},{
+			name : '孙荔丽',
+			label : '油菜花'
+		},{
+			name : '孙荔丽',
+			label : '油菜花'
+		},{
+			name : '孙荔丽',
+			label : '油菜花'
+		},{
+			name : '孙荔丽',
+			label : '油菜花'
+		},{
+			name : '孙荔丽',
+			label : '油菜花'
+		},{
+			name : '孙荔丽',
+			label : '油菜花'
+		},{
+			name : '孙荔丽',
+			label : '油菜花'
+		},{
+			name : '孙荔丽',
+			label : '油菜花'
+		},{
+			name : '孙荔丽',
+			label : '油菜花'
+		},{
+			name : '孙荔丽',
+			label : '油菜花'
+		},{
+			name : '孙荔丽',
+			label : '油菜花'
+		},{
+			name : '孙荔丽',
+			label : '油菜花'
+		},{
+			name : '孙荔丽',
+			label : '油菜花'
+		},{
+			name : '孙荔丽',
+			label : '油菜花'
+		}];
+		
         $(document).ready(function(){
 
             $('#searchbox').searchbox({
@@ -42,7 +107,8 @@
                 hintMaxHeight: '200px',
                 dropBtn:true,
                 searchMethod : function(t){
-                    this.displayHint([{name:'孙荔丽', label:'油菜花'}, {name:'张舒来', label:'大天才'}]);
+                    //this.displayHint([{name:'孙荔丽', label:'油菜花'}, {name:'张舒来', label:'大天才'}]);
+					this.displayHint(arr);
                 },
                 buildTds : function(v){
                     var td1 = $('<td />').text(v.name);

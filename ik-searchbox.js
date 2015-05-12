@@ -8,7 +8,7 @@
 			 * value must be selected
 			 */
 			mustSelect : true,
-			delay : 200,
+			delay : 700,
 			fetchLabel : function(c){
 				return c;
 			},
@@ -52,15 +52,15 @@
 
 		_activeDropdown : function(){
 			if(this.options.dropBtn){
-				this._dropBtnObj.addClass('ik-searchbox-dropbutton-active');
-				this._dropBtnObj.removeClass('ik-searchbox-dropbutton');
+				this._dropBtnObj.addClass('ik-opacity8');
+				this._dropBtnObj.removeClass('ik-opacity3');
 			}
 		},
 
 		_deactiveDropdown: function(){
 			if(this.options.dropBtn){
-				this._dropBtnObj.addClass('ik-searchbox-dropbutton');
-				this._dropBtnObj.removeClass('ik-searchbox-dropbutton-active');
+				this._dropBtnObj.addClass('ik-opacity3');
+				this._dropBtnObj.removeClass('ik-opacity8');
 			}
 		},
 
@@ -81,11 +81,6 @@
 			//add the specific class to the input element.
 			this.element.addClass('ik-searchbox');
 
-			//caculate the width, height and offset of the input element.
-			var width = this.element.width();
-			var outerWidth = this.element.outerWidth(true);
-			var height = this.element.outerHeight(true);
-			//var offset = this.element.position();
 			//enable drop button
 			if(this.options.dropBtn){
 				this._createDropButton();
@@ -103,9 +98,6 @@
 
 			//insert the hint box after the input element.
 			hintDiv.insertAfter(this.element);
-			// hintDiv.css('top', '' + (offset.top+height) + 'px');
-			// hintDiv.css('left', '' + offset.left + 'px');
-			//hintDiv.offset({top: offset.top+height, left:offset.left});
 
 			this._hintTblObj = tbl;
 
@@ -161,14 +153,13 @@
 		},
 
 		_createDropButton : function(){
-			var dropDownTag = $('<span />')
+			var dropDownTag = $('<span />').html('&#x25bc;')
 							.addClass('ik-searchbox-db')
 							.addClass('ik-searchbox-dropbutton')
-							.text('▲');
+							.addClass('ik-opacity3');
 			dropDownTag.insertAfter(this.element);
-			var offset = this.element.position();
-			var outerWidth = this.element.outerWidth(true);
-			dropDownTag.offset({top: offset.top, left: offset.left+outerWidth-dropDownTag.outerWidth(true)});
+			var fontsize = this.element.css('font-size');
+			var _width = dropDownTag.outerWidth();
 			var inputEle = this;
 			dropDownTag.click(function(){
 
